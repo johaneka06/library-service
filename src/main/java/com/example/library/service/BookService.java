@@ -1,7 +1,7 @@
 package com.example.library.service;
 
 import com.example.library.entity.Book;
-import com.example.library.repository.BookInterface;
+import com.example.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class BookService {
 
     @Autowired
-    private BookInterface bookInterface;
+    private BookRepository bookInterface;
 
     private final String ServiceName = "BookService";
 
@@ -66,6 +66,46 @@ public class BookService {
     }
 
     // Method for handling find book by name
+    @GetMapping("/find")
+    public ResponseEntity getBooksByName(@RequestParam String bookName) {
+        ResponseEntity entity = null;
+
+        System.out.println("=== START SERVICE [" + ServiceName + "] ===");
+
+        System.out.println("[" + ServiceName + "] START METHOD getBooksByName");
+
+        System.out.println("[" + ServiceName + " - getBooksByName] Input: " + bookName);
+
+        System.out.println("[" + ServiceName + " - getBooksByName] Replacing '-' in bookName with ' ' (Space)");
+        bookName = bookName.replace("-", " ");
+        System.out.println("[" + ServiceName + " - getBooksByName] New Input: " + bookName);
+
+        System.out.println("[" + ServiceName + " - getBooksByName] Invoking DB");
+        System.out.println("[" + ServiceName + " - getBooksByName] Looking for books with name ["+ bookName +"] on DB");
+
+        List<Book> books = bookInterface.findBooksByBookNameContaining(bookName);
+
+        if(books.size() == 0) {
+            System.out.println("[" + ServiceName + " - getBooksByName] No books found");
+
+            HashMap<String, String> hsOutput = new HashMap<>();
+
+            hsOutput.put("error_key", "ER-00-204");
+            hsOutput.put("error_msg", "No Book in Database");
+
+            entity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hsOutput);
+
+        } else {
+            System.out.println("[" + ServiceName + " - getBooksByName] DB Output: " + books);
+            entity = ResponseEntity.status(HttpStatus.OK).body(books);
+        }
+
+        System.out.println("[" + ServiceName + " - getBooksByName] Returned with message: " + entity);
+        System.out.println("=== FINISH METHOD [ getBooksByName ] ===");
+        System.out.println("=== FINISH SERVICE [" + ServiceName + "] ===");
+
+        return entity;
+    }
 
     // Method for handling get book detail by ID
     @GetMapping("/{bookId}/detail")
@@ -87,10 +127,10 @@ public class BookService {
             System.out.println("[" + ServiceName + " - getBookDetail] No Book found with ID [" + bookId + "] on DB");
 
             HashMap<String, String> hsOutput = new HashMap<>();
-            hsOutput.put("error_key", "ER-00-404");
+            hsOutput.put("error_key", "ER-00-204");
             hsOutput.put("error_msg", "ID not found on Database");
 
-            entity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(hsOutput);
+            entity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(hsOutput);
         } else {
             System.out.println("[" + ServiceName + " - getBookDetail] DB Output: " + res);
 
