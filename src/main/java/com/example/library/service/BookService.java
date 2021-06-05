@@ -202,4 +202,53 @@ public class BookService {
     // Method for handling update current resource
 
     // Method for handling delete resource
+    @DeleteMapping("/{bookId}/delete")
+    public ResponseEntity deleteResource(@PathVariable String bookId) {
+        ResponseEntity entity = null;
+        HashMap<Object, Object> hsOutput = new HashMap<>();
+
+        System.out.println("=== START SERVICE [" + ServiceName + "] ===");
+
+        System.out.println("[" + ServiceName + "] START METHOD deleteResource");
+
+        System.out.println("[" + ServiceName + " - deleteResource] Input: " + bookId);
+
+        if(bookId == null || bookId.equals("") || bookId.equals("null")) {
+            System.out.println("[" + ServiceName + " - deleteResource] Book ID is null. Terminating service");
+
+            hsOutput.put("error_key", "ER-00-400");
+            hsOutput.put("error_msg", "ID can't be null");
+
+            entity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hsOutput);
+        } else {
+            System.out.println("[" + ServiceName + " - createNewBook] Invoking DB");
+            System.out.println("[" + ServiceName + " - createNewBook] Looking for book with id: [" + bookId + "] on DB");
+            Optional<Book> res = bookInterface.findById(bookId);
+
+            if(res.isEmpty()) {
+                System.out.println("[" + ServiceName + " - getBookDetail] No Book found with ID [" + bookId + "] on DB");
+
+                hsOutput.put("error_key", "ER-00-204");
+                hsOutput.put("error_msg", "Book not found");
+
+                entity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hsOutput);
+            } else {
+                System.out.println("[" + ServiceName + " - getBookDetail] DB Output: " + res);
+
+                bookInterface.delete(res.get());
+
+                hsOutput.put("error_key", "ERR-00-000");
+                hsOutput.put("error_msg", "Object deleted");
+                hsOutput.put("deleted_obj", res.get());
+
+                entity = ResponseEntity.status(HttpStatus.OK).body(hsOutput);
+            }
+        }
+
+        System.out.println("[" + ServiceName + " - createNewBook] Returned with message: " + entity);
+        System.out.println("=== FINISH METHOD [ createNewBook ] ===");
+        System.out.println("=== FINISH SERVICE [" + ServiceName + "] ===");
+
+        return entity;
+    }
 }
