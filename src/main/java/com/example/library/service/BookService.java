@@ -117,24 +117,33 @@ public class BookService {
         System.out.println("[" + ServiceName + "] START METHOD getBookDetail");
 
         System.out.println("[" + ServiceName + " - getBookDetail] Input: " + bookId);
-
-        System.out.println("[" + ServiceName + " - getBookDetail] Invoking DB");
-        System.out.println("[" + ServiceName + " - getBookDetail] Looking for book with id: [" + bookId + "] on DB");
-
-        Optional<Book> res = bookInterface.findById(bookId);
-
-        if(res.isEmpty()) {
-            System.out.println("[" + ServiceName + " - getBookDetail] No Book found with ID [" + bookId + "] on DB");
+        if(bookId == null || bookId.equals("") || bookId.equals("null")) {
+            System.out.println("[" + ServiceName + " - getBookDetail] Book ID is null. Terminating service");
 
             HashMap<String, String> hsOutput = new HashMap<>();
-            hsOutput.put("error_key", "ER-00-204");
-            hsOutput.put("error_msg", "ID not found on Database");
+            hsOutput.put("error_key", "ER-00-400");
+            hsOutput.put("error_msg", "ID can't be null");
 
-            entity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(hsOutput);
+            entity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hsOutput);
         } else {
-            System.out.println("[" + ServiceName + " - getBookDetail] DB Output: " + res);
+            System.out.println("[" + ServiceName + " - getBookDetail] Invoking DB");
+            System.out.println("[" + ServiceName + " - getBookDetail] Looking for book with id: [" + bookId + "] on DB");
 
-            entity = ResponseEntity.status(HttpStatus.OK).body(res);
+            Optional<Book> res = bookInterface.findById(bookId);
+
+            if(res.isEmpty()) {
+                System.out.println("[" + ServiceName + " - getBookDetail] No Book found with ID [" + bookId + "] on DB");
+
+                HashMap<String, String> hsOutput = new HashMap<>();
+                hsOutput.put("error_key", "ER-00-204");
+                hsOutput.put("error_msg", "ID not found on Database");
+
+                entity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hsOutput);
+            } else {
+                System.out.println("[" + ServiceName + " - getBookDetail] DB Output: " + res);
+
+                entity = ResponseEntity.status(HttpStatus.OK).body(res);
+            }
         }
 
         System.out.println("[" + ServiceName + " - getBookDetail] Returned with message: " + entity);
