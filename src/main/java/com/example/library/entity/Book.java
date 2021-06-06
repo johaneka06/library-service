@@ -11,6 +11,16 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
+ /*
+    Project     : Library Service
+    Class       : Book.java
+    Author      : Johan Eka Santosa
+    Created On  : Sat, 05-06-2021
+
+    Version History:
+        v1.0.0 => Initial Work (Sat, 05-06-2021 by Johan Eka Santosa)
+ */
+
 @Entity
 @Data
 @ToString
