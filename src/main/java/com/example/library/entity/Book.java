@@ -40,6 +40,17 @@ public class Book {
     @Column(name = "book_desc")
     private String bookDesc;
 
+    //New Properties - 20210606
+    @Column(name = "published_year")
+    private Integer publishedYear;
+
+    @Column(name = "book_isbn")
+    private String bookIsbn;
+
+    @Column(name = "book_img")
+    private String bookImg;
+    //End new properties - 20210606
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 
@@ -48,12 +59,26 @@ public class Book {
 
     public Book() { }
 
-    public Book(String book_name, String book_desc) {
+    public Book(String bookName, String bookDesc) { //Change from snake case to camel case - 20210606
         Timestamp ts = new Timestamp((new Date()).getTime());
 
         this.bookId = UUID.randomUUID().toString().replace("-", "");
-        this.bookName = book_name;
-        this.bookDesc = book_desc;
+        this.bookName = bookName; //Change from book_name to bookName - 20210606
+        this.bookDesc = bookDesc; //Change from book_desc to bookDesc - 20210606
+        this.createdAt = ts;
+        this.updatedAt = ts;
+    }
+
+    //New Constructor - 20210606
+    public Book(String bookName, String bookDesc, Integer publishedYear, String bookIsbn, String bookImg) {
+        Timestamp ts = new Timestamp((new Date()).getTime());
+
+        this.bookId = UUID.randomUUID().toString().replace("-", "");
+        this.bookName = bookName;
+        this.bookDesc = bookDesc;
+        this.bookIsbn = bookIsbn;
+        this.publishedYear = publishedYear;
+        this.bookImg = bookImg;
         this.createdAt = ts;
         this.updatedAt = ts;
     }
