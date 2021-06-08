@@ -181,7 +181,7 @@ public class BookService {
         } else {
             System.out.println("[" + ServiceName + " - createNewBook] Saving book to DB");
 
-            Book temp = new Book(book.getBookName(), book.getBookDesc());
+            Book temp = new Book(book.getBookName(), book.getBookDesc(), book.getPublishedYear(), book.getBookIsbn(), book.getBookImg());
 
             bookInterface.save(temp);
 
